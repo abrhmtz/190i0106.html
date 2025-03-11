@@ -32,7 +32,7 @@
             this.velY = velY;
             this.size = size;
             this.image = new Image();
-            this.image.src = "esfera.png"; // Asegúrate de tener un archivo imagen.png en la misma carpeta
+            this.image.src = 'esfera.png'; // Ruta absoluta a la imagen
         }
 
         Ball.prototype.draw = function () {
@@ -62,7 +62,7 @@
                     var distance = Math.sqrt(dx * dx + dy * dy);
 
                     if (distance < this.size + balls[j].size) {
-                        balls[j].image.src = this.image.src = "esfera.png"; // Cambia la imagen si hay colisión
+                        balls[j].image.src = this.image.src = 'esfera.png'; // Cambia la imagen si hay colisión
                     }
                 }
             }
@@ -107,7 +107,7 @@
 
         // Función para reproducir el sonido de "boing"
         function playBoingSound() {
-            var audio = new Audio('cancion.mp3'); // Asegúrate de tener un archivo boing.mp3 en la misma carpeta
+            var audio = new Audio('boing.mp3'); // Asegúrate de tener un archivo boing.mp3 en la misma carpeta
             audio.play();
         }
     </script>
