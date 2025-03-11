@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imágenes Rebotando</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: rgb(162, 14, 14);
+        }
+    </style>
+</head>
+<body>
+    <canvas></canvas>
+    <script>
+        var canvas = document.querySelector("canvas");
+        var ctx = canvas.getContext("2d");
+
+        var width = (canvas.width = window.innerWidth);
+        var height = (canvas.height = window.innerHeight);
+
+        function random(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function Ball(x, y, velX, velY, size) {
+            this.x = x;
+            this.y = y;
+            this.velX = velX;
+            this.velY = velY;
+            this.size = size;
+            this.image = new Image();
+            this.image.src = "esfera.png"; // Asegúrate de tener un archivo imagen.png en la misma carpeta
+        }
+
+        Ball.prototype.draw = function () {
+            ctx.drawImage(this.image, this.x - this.size, this.y - this.size, this.size * 2, this.size * 2);
+        };
+
+        Ball.prototype.update = function () {
+            if (this.x + this.size >= width || this.x - this.size <= 0) {
+                this.velX = -this.velX;
+                playBoingSound();
+            }
+
+            if (this.y + this.size >= height || this.y - this.size <= 0) {
+                this.velY = -this.velY;
+                playBoingSound();
+            }
+
+            this.x += this.velX;
+            this.y += this.velY;
+        };
+
+        Ball.prototype.collisionDetect = function () {
+            for (var j = 0; j < balls.length; j++) {
+                if (this !== balls[j]) {
+                    var dx = this.x - balls[j].x;
+                    var dy = this.y - balls[j].y;
+                    var distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < this.size + balls[j].size) {
+                        balls[j].image.src = this.image.src = "esfera.png"; // Cambia la imagen si hay colisión
+                    }
+                }
+            }
+        };
+
+        var balls = [];
+
+        function loop() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
+            ctx.fillRect(0, 0, width, height);
+
+            while (balls.length < 20) {
+                var size = random(20, 70); // Min y max corregidos
+                var ball = new Ball(
+                    random(size, width - size),
+                    random(size, height - size),
+                    random(-7, 7), // Ahora puede ser negativo o positivo
+                    random(-7, 7),
+                    size
+                );
+                balls.push(ball);
+            }
+
+            for (var i = 0; i < balls.length; i++) {
+                balls[i].draw();
+                balls[i].update();
+                balls[i].collisionDetect();
+            }
+
+            requestAnimationFrame(loop);
+        }
+
+        loop();
+
+        window.addEventListener("resize", function () {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            width = canvas.width;
+            height = canvas.height;
+            balls = []; // Reiniciar las bolas al cambiar de tamaño la ventana
+        });
+
+        // Función para reproducir el sonido de "boing"
+        function playBoingSound() {
+            var audio = new Audio('cancion.mp3'); // Asegúrate de tener un archivo boing.mp3 en la misma carpeta
+            audio.play();
+        }
+    </script>
+</body>
+</html>
